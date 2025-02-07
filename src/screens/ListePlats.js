@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import CartePlat from '../components/CartePlat';
 import Bouton from '../components/Bouton';
+import { getData } from '../utils/api';
 
 const ListePlat = ({ setCommande, setCurrentPage }) => {
-  const [plats] = useState([
-    { id: '1', nom: 'Pizza Margherita', description: 'Tomates, mozzarella, basilic', prix: 12, image: 'https://via.placeholder.com/80' },
-    { id: '2', nom: 'Burger Vegan', description: 'Steak de légumes, salade, tomate', prix: 10, image: 'https://via.placeholder.com/80' },
-    { id: '3', nom: 'Salade César', description: 'Poulet, parmesan, croûtons', prix: 8, image: 'https://via.placeholder.com/80' },
-  ]);
-
+  const [plats, setPlats] = useState([]);
   const [quantites, setQuantites] = useState({});
+
+  // Fonction pour récupérer les plats
+  const loadPlats = async () => {
+    try {
+      const apiData = await getData("admin/plats/all-detailed");
+      setPlats(apiData);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des plats :", error);
+    }
+  };
+
+  // Chargement des plats au montage du composant
+  useEffect(() => {
+    loadPlats();
+  }, []);
 
   const handleChangerQuantite = (id, operation) => {
     setQuantites((prevQuantites) => {
@@ -32,7 +43,7 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
       return;
     }
 
-    setCommande(commandeDetails); 
+    setCommande(commandeDetails);
     setCurrentPage('Paiement');
   };
 
@@ -52,7 +63,7 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
       <Text style={styles.title}>Liste des plats</Text>
       <FlatList
         data={plats}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
       />
       <Bouton title="Acheter" onPress={handleValiderCommande} />

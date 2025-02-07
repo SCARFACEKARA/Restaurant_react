@@ -6,8 +6,8 @@ const CartePlat = ({ plat }) => {
     <View style={styles.card}>
       <Image source={{ uri: plat.image }} style={styles.image} />
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{plat.nom}</Text>
-        <Text style={styles.description}>{plat.description}</Text>
+        <Text style={styles.title}>{plat.nomPlat.toString()}</Text>
+        <Text style={styles.description}>{plat.prixUnitaire.toString()} Ar</Text>
       </View>
     </View>
   );
