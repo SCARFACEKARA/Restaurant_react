@@ -9,6 +9,7 @@ import couleurs from './src/couleurs/Couleurs';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('Login'); // Page par défaut
+  const [commande, setCommande] = useState(null); // État pour la commande
 
   const renderPage = () => {
     switch (currentPage) {
@@ -19,9 +20,9 @@ export default function App() {
       case 'ListePlats':
         return <ListePlats />;
       case 'FaireCommande':
-        return <FaireCommande />;
+        return <FaireCommande setCommande={setCommande} setCurrentPage={setCurrentPage} />;
       case 'Paiement':
-        return <Paiement />;
+        return <Paiement commande={commande} setCurrentPage={setCurrentPage} />;
       default:
         return <Login />;
     }

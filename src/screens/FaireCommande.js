@@ -2,20 +2,16 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import CartePlat from '../components/CartePlat';
 import Bouton from '../components/Bouton';
-import { useNavigation } from '@react-navigation/native';
 
-const FaireCommande = () => {
-  const navigation = useNavigation();
-
-  // Exemple de données de plats
-  const [plats, setPlats] = useState([
+const FaireCommande = ({ setCommande, setCurrentPage }) => {
+  const [plats] = useState([
     { id: '1', nom: 'Pizza Margherita', description: 'Tomates, mozzarella, basilic', prix: 12, image: 'https://via.placeholder.com/80' },
     { id: '2', nom: 'Burger Vegan', description: 'Steak de légumes, salade, tomate', prix: 10, image: 'https://via.placeholder.com/80' },
     { id: '3', nom: 'Salade César', description: 'Poulet, parmesan, croûtons', prix: 8, image: 'https://via.placeholder.com/80' },
   ]);
 
   const [quantites, setQuantites] = useState({});
-
+  
   const handleChangerQuantite = (id, operation) => {
     setQuantites((prevQuantites) => {
       const nouvelleQuantite = Math.max((prevQuantites[id] || 0) + operation, 0);
@@ -24,19 +20,20 @@ const FaireCommande = () => {
   };
 
   const handleValiderCommande = () => {
-    const commande = plats
+    const commandeDetails = plats
       .filter((plat) => quantites[plat.id] > 0)
       .map((plat) => ({
         plat,
         quantite: quantites[plat.id],
       }));
 
-    if (commande.length === 0) {
+    if (commandeDetails.length === 0) {
       alert('Veuillez sélectionner au moins un plat.');
       return;
     }
 
-    navigation.navigate('Paiement', { commande });
+    setCommande(commandeDetails); // Met à jour l'état de la commande dans App
+    setCurrentPage('Paiement'); // Redirige vers la page Paiement
   };
 
   const renderItem = ({ item }) => (
@@ -58,7 +55,7 @@ const FaireCommande = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
       />
-      <Bouton title="Valider la commande" onPress={handleValiderCommande} />
+      <Bouton title="Commander" onPress={handleValiderCommande} />
     </View>
   );
 };
@@ -72,19 +69,24 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   cardContainer: {
     marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    padding: 10,
   },
   quantityContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
   },
   quantityText: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginHorizontal: 10,
   },
 });
 

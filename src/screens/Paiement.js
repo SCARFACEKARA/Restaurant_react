@@ -1,36 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Alert } from 'react-native';
-import CartePlat from '../components/CartePlat';
-import Bouton from '../components/Bouton';
+import { View, Text, StyleSheet } from 'react-native';
+import Bouton from '../components/Bouton'; // Assurez-vous que le chemin est correct
 
-const Paiement = ({ route }) => {
-  const { commande } = route.params; // Récupération de la commande via les paramètres de la route
-
-  const calculerTotal = () => {
-    return commande.reduce((total, item) => total + item.plat.prix * item.quantite, 0);
-  };
+const Paiement = ({ commande }) => {
+  // Calculer le total de la commande
+  const total = commande.reduce((acc, { plat, quantite }) => acc + plat.prix * quantite, 0);
 
   const handlePayer = () => {
-    Alert.alert("Paiement", "Votre paiement a été effectué avec succès !");
+    // Logique pour gérer le paiement (par exemple, afficher une alerte ou naviguer vers une autre page)
+    alert("Paiement effectué avec succès !");
   };
-
-  const renderItem = ({ item }) => (
-    <View style={styles.cardContainer}>
-      <CartePlat plat={item.plat} />
-      <Text style={styles.quantityText}>Quantité: {item.quantite}</Text>
-      <Text style={styles.priceText}>Prix: ${(item.plat.prix * item.quantite).toFixed(2)}</Text>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Résumé de la commande</Text>
-      <FlatList
-        data={commande}
-        keyExtractor={(item) => item.plat.id}
-        renderItem={renderItem}
-      />
-      <Text style={styles.total}>Total: ${calculerTotal().toFixed(2)}</Text>
+      <Text style={styles.title}>Récapitulatif de la commande</Text>
+      {commande.map(({ plat, quantite }) => (
+        <View key={plat.id} style={styles.itemContainer}>
+          <Text>{plat.nom} x {quantite}</Text>
+          <Text>{plat.prix}€</Text>
+        </View>
+      ))}
+      <Text style={styles.total}>Total : {total}€</Text>
+
       <Bouton title="Payer" onPress={handlePayer} />
     </View>
   );
@@ -45,21 +36,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
-  cardContainer: {
-    marginBottom: 20,
-  },
-  quantityText: {
-    fontSize: 16,
-    marginTop: 5,
-  },
-  priceText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+  itemContainer: {
+    marginBottom: 10,
   },
   total: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     marginTop: 20,
   },
