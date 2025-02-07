@@ -3,8 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Login from './src/screens/Login';
 import Signin from './src/screens/Signin';
 import ListePlats from './src/screens/ListePlats';
-import FaireCommande from './src/screens/FaireCommande';
-import Paiement from './src/screens/Paiement';
+import FaireCommande from './src/screens/ListeCommande';
 import couleurs from './src/couleurs/Couleurs';
 
 export default function App() {
@@ -42,9 +41,6 @@ export default function App() {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setCurrentPage('FaireCommande')}>
           <Text style={styles.navItem}>Commande</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setCurrentPage('Paiement')}>
-          <Text style={styles.navItem}>Paiement</Text>
         </TouchableOpacity>
       </View>
       {renderPage()}
