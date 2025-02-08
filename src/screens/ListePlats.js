@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import CartePlat from '../components/CartePlat';
 import Bouton from '../components/Bouton';
-import { getData , postData} from '../utils/api';
+import { getData, postData } from '../utils/api';
+import couleurs from '../couleurs/Couleurs';
 
 const ListePlat = ({ setCommande, setCurrentPage }) => {
   const [plats, setPlats] = useState([]);
   const [quantites, setQuantites] = useState({});
 
-  // Fonction pour récupérer les plats
   const loadPlats = async () => {
     try {
       const apiData = await getData("admin/plats/all-detailed");
@@ -18,7 +18,6 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
     }
   };
 
-  // Chargement des plats au montage du composant
   useEffect(() => {
     loadPlats();
   }, []);
@@ -29,32 +28,31 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
       return { ...prevQuantites, [id]: nouvelleQuantite };
     });
   };
-   
-  async function commander(){
+
+  async function commander() {
     try {
       const payload = {
-        "montantTotal":780,
-        "status":"en cours",
-        "idClient":"1"
+        montantTotal: 780,
+        status: "en cours",
+        idClient: "1",
       };
-      const apiData = await postData("admin/commandes/create",payload);
+      const apiData = await postData("admin/commandes/create", payload);
       return apiData.id;
     } catch (error) {
-      console.error("Erreur lors de la récupération des plats :", error);
+      console.error("Erreur lors de la création de la commande :", error);
     }
-  };
+  }
 
-  async function detailCommander(data){
+  async function detailCommander(data) {
     try {
-      const apiData = await postData("admin/detail-commandes/create",data);
-      console.log("Detaille commande" + apiData);
-      
+      const apiData = await postData("admin/detail-commandes/create", data);
+      console.log("Détails commande", apiData);
     } catch (error) {
-      console.error("Erreur lors de la récupération des plats :", error);
+      console.error("Erreur lors de l'envoi des détails de la commande :", error);
     }
-  };
+  }
 
-  const handleValiderCommande = async ()  => {
+  const handleValiderCommande = async () => {
     const commandeDetails = plats
       .filter((plat) => quantites[plat.id] > 0)
       .map((plat) => ({
@@ -63,24 +61,22 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
       }));
 
     if (commandeDetails.length === 0) {
-      alert('Veuillez sélectionner au moins un plat.');
+      alert("Veuillez sélectionner au moins un plat.");
       return;
     }
 
-    var idCommande = await commander();
-    var detailleCommandes = [];
-    var status = "en cours";
-    for (let index = 0; index < commandeDetails.length; index++) {
-      for (let dt = 0; dt < commandeDetails[index].quantite; dt++) {
-        var newDet = {
-          "idCommande": idCommande,
-          "idPlat": commandeDetails[index].plat['id'],
-          "status": status          
-        }
-        detailleCommandes.push(newDet);
-      }
-    }
-    await detailCommander(detailleCommandes);
+    const idCommande = await commander();
+    if (!idCommande) return;
+
+    const detailsCommandes = commandeDetails.flatMap((detail) =>
+      Array(detail.quantite).fill({
+        idCommande,
+        idPlat: detail.plat.id,
+        status: "en cours",
+      })
+    );
+
+    await detailCommander(detailsCommandes);
     setPlats([]);
   };
 
@@ -98,12 +94,8 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Liste des plats</Text>
-      <FlatList
-        data={plats}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-      />
-      <Bouton title="Acheter" onPress={handleValiderCommande} />
+      <FlatList data={plats} keyExtractor={(item) => item.id.toString()} renderItem={renderItem} />
+      <Bouton title="Acheter" onPress={handleValiderCommande} variant="primary" />
     </View>
   );
 };
@@ -115,26 +107,26 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   cardContainer: {
     marginBottom: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: couleurs.primaire[5],
     borderRadius: 10,
-    padding: 10,
+    padding: 15,
   },
   quantityContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
   },
   quantityText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginHorizontal: 10,
+    fontWeight: "bold",
+    marginHorizontal: 15,
   },
 });
 
