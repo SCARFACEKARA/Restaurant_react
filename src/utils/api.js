@@ -18,7 +18,9 @@ export const postData = async (endpoint, payload) => {
     const response = await axios.post(`${apiBaseUrl}/${endpoint}`, payload);
     return response.data;
   } catch (error) {
-    console.error('Erreur lors de l\'envoi des données :', error.message);
+    if (error.response && error.response.status >= 400 && error.response.status < 500) {
+      return error.response.data;
+    }
     throw error;
   }
 };

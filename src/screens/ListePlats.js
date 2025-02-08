@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import CartePlat from '../components/CartePlat';
 import Bouton from '../components/Bouton';
-import { getData } from '../utils/api';
+import { getData , postData} from '../utils/api';
 
 const ListePlat = ({ setCommande, setCurrentPage }) => {
   const [plats, setPlats] = useState([]);
@@ -29,8 +29,32 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
       return { ...prevQuantites, [id]: nouvelleQuantite };
     });
   };
+   
+  async function commander(){
+    try {
+      const payload = {
+        "montantTotal":780,
+        "status":"en cours",
+        "idClient":"1"
+      };
+      const apiData = await postData("admin/commandes/create",payload);
+      return apiData.id;
+    } catch (error) {
+      console.error("Erreur lors de la récupération des plats :", error);
+    }
+  };
 
-  const handleValiderCommande = () => {
+  async function detailCommander(data){
+    try {
+      const apiData = await postData("admin/detail-commandes/create",data);
+      console.log("Detaille commande" + apiData);
+      
+    } catch (error) {
+      console.error("Erreur lors de la récupération des plats :", error);
+    }
+  };
+
+  const handleValiderCommande = async ()  => {
     const commandeDetails = plats
       .filter((plat) => quantites[plat.id] > 0)
       .map((plat) => ({
@@ -43,8 +67,21 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
       return;
     }
 
-    setCommande(commandeDetails);
-    setCurrentPage('Paiement');
+    var idCommande = await commander();
+    var detailleCommandes = [];
+    var status = "en cours";
+    for (let index = 0; index < commandeDetails.length; index++) {
+      for (let dt = 0; dt < commandeDetails[index].quantite; dt++) {
+        var newDet = {
+          "idCommande": idCommande,
+          "idPlat": commandeDetails[index].plat['id'],
+          "status": status          
+        }
+        detailleCommandes.push(newDet);
+      }
+    }
+    await detailCommander(detailleCommandes);
+    setPlats([]);
   };
 
   const renderItem = ({ item }) => (

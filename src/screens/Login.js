@@ -4,14 +4,26 @@ import Formulaire from '../components/Formulaire';
 import Bouton from '../components/Bouton';
 import Entete from '../components/Entete';
 import couleurs from '../couleurs/Couleurs';
-
+import { postData } from '../utils/api';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     console.log('Email:', email);
     console.log('Password:', password);
+    data = {
+      "email":email,
+      "mdp":password
+    };
+    const apiData = await postData("users/login", data);
+
+    if (apiData.error) {
+      console.log("Erreur :", apiData.error);
+    } else {
+      console.log("Succès :", apiData.message);
+    }
   };
 
   return (
