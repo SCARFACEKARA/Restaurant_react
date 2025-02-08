@@ -57,9 +57,9 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1,
-    paddingTop: 120, // Compense la hauteur de l'entête
-    paddingHorizontal: 20,
     justifyContent: 'center',
+    paddingHorizontal: 20,
+    marginTop: 10,
   },
   title: {
     fontSize: 50,

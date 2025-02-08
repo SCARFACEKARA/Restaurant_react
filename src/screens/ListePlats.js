@@ -4,6 +4,7 @@ import CartePlat from '../components/CartePlat';
 import Bouton from '../components/Bouton';
 import { getData, postData } from '../utils/api';
 import couleurs from '../couleurs/Couleurs';
+import Entete from '../components/Entete';
 
 const ListePlat = ({ setCommande, setCurrentPage }) => {
   const [plats, setPlats] = useState([]);
@@ -93,8 +94,16 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.enteteContainer}>
+        <Entete setCurrentPage={setCurrentPage} />
+      </View>
       <Text style={styles.title}>Liste des plats</Text>
-      <FlatList data={plats} keyExtractor={(item) => item.id.toString()} renderItem={renderItem} />
+      <FlatList
+        data={plats}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        contentContainerStyle={styles.flatListContainer}
+      />
       <Bouton title="Acheter" onPress={handleValiderCommande} variant="primary" />
     </View>
   );
@@ -105,15 +114,21 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  enteteContainer: {
+    marginTop: 0, // Pas de marge avant l'entête, juste en haut de la page
+    marginBottom: 200, // Pour séparer l'entête du reste du contenu
+  },
   title: {
-    fontSize: 24,
+    fontSize: 40,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    color: couleurs.primaire[3],
   },
+  
   cardContainer: {
     marginBottom: 20,
-    backgroundColor: couleurs.primaire[5],
+    backgroundColor: couleurs.primaire[1],
     borderRadius: 10,
     padding: 15,
   },
@@ -127,6 +142,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginHorizontal: 15,
+  },
+  flatListContainer: {
+    paddingBottom: 100, // Ajouter un espace pour ne pas couper le dernier bouton
   },
 });
 

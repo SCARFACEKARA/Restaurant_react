@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Button, TextInput } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { getData } from '../utils/api';
+import Entete from '../components/Entete';
+import couleurs from '../couleurs/Couleurs';
 
-const ListeCommande = ({ setCommande }) => {
+const ListeCommande = ({ setCurrentPage }) => {
   const [commandes, setCommandes] = useState([]);
   const [commandeSelectionnee, setCommandeSelectionnee] = useState(null);
-  const [newCommande, setNewCommande] = useState('');
 
-  // Charger les commandes au montage du composant
   useEffect(() => {
-    const loadPlats = async () => {
+    const loadCommandes = async () => {
       try {
         const apiData = await getData("admin/commandes/all");
         setCommandes(apiData);
@@ -17,23 +17,17 @@ const ListeCommande = ({ setCommande }) => {
         console.error("Erreur lors de la récupération des commandes :", error);
       }
     };
-    loadPlats();
+    loadCommandes();
   }, []);
 
-  // Fonction pour ajouter une nouvelle commande
-  const ajouterCommande = () => {
-    if (newCommande.trim() !== '') {
-      setCommandes(prevCommandes => [...prevCommandes, { id: commandes.length + 1, nom: newCommande }]);
-      setNewCommande('');
-    }
-  };
-
-  // Fonction pour afficher/cacher les détails d'une commande
   const toggleDetails = (id) => {
     setCommandeSelectionnee((prevId) => (prevId === id ? null : id));
   };
 
-  // Rendu d'une commande
+  const handleValiderCommande = () => {
+    console.log("Commande validée !");
+  };
+
   const renderCommande = ({ item }) => (
     <View style={styles.commandeContainer}>
       <TouchableOpacity onPress={() => toggleDetails(item.id)}>
@@ -60,39 +54,53 @@ const ListeCommande = ({ setCommande }) => {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Liste des Commandes</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nouvelle commande"
-        value={newCommande}
-        onChangeText={setNewCommande}
-      />
-      <Button title="Ajouter une commande" onPress={ajouterCommande} />
-      <FlatList
-        data={commandes}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderCommande}
-      />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.enteteContainer}>
+        <Entete setCurrentPage={setCurrentPage} />
+      </View>
+      
+      <View style={styles.listContainer}>
+        <Text style={styles.title}>Liste des Commandes</Text>
+        <FlatList
+          data={commandes}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderCommande}
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
+    backgroundColor: couleurs.primaire[0],
+  },
+  enteteContainer: {
+    backgroundColor: couleurs.primaire[1],
+    marginBottom: 30,
+    Index: 10,  // Garantit que l'entête reste au-dessus du contenu
+  },
+  listContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    marginTop: 5,  // Assure qu'il y ait assez de place pour l'entête
   },
   title: {
-    fontSize: 20,
+    fontSize: 40,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginVertical: 10,
+    textAlign: 'center',
+    color: couleurs.primaire[3],
+    marginTop:200,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 5,
+  list: {
+    flex: 1,
+  },
+  listContent: {
+    paddingBottom: 20,
   },
   commandeContainer: {
     padding: 10,
@@ -115,6 +123,9 @@ const styles = StyleSheet.create({
   },
   detailItem: {
     marginVertical: 3,
+  },
+  footerButton: {
+    marginTop: 10,
   },
 });
 
