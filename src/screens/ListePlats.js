@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import CartePlat from '../components/CartePlat';
-import Bouton from '../components/Bouton';  // Bouton avec variante
-import { getData } from '../utils/api';
+import Bouton from '../components/Bouton';
+import { getData, postData } from '../utils/api';
 import couleurs from '../couleurs/Couleurs';
 
 const ListePlat = ({ setCommande, setCurrentPage }) => {
@@ -29,7 +29,30 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
     });
   };
 
-  const handleValiderCommande = () => {
+  async function commander() {
+    try {
+      const payload = {
+        montantTotal: 780,
+        status: "en cours",
+        idClient: "1",
+      };
+      const apiData = await postData("admin/commandes/create", payload);
+      return apiData.id;
+    } catch (error) {
+      console.error("Erreur lors de la création de la commande :", error);
+    }
+  }
+
+  async function detailCommander(data) {
+    try {
+      const apiData = await postData("admin/detail-commandes/create", data);
+      console.log("Détails commande", apiData);
+    } catch (error) {
+      console.error("Erreur lors de l'envoi des détails de la commande :", error);
+    }
+  }
+
+  const handleValiderCommande = async () => {
     const commandeDetails = plats
       .filter((plat) => quantites[plat.id] > 0)
       .map((plat) => ({
@@ -38,12 +61,23 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
       }));
 
     if (commandeDetails.length === 0) {
-      alert('Veuillez sélectionner au moins un plat.');
+      alert("Veuillez sélectionner au moins un plat.");
       return;
     }
 
-    setCommande(commandeDetails);
-    setCurrentPage('Paiement');
+    const idCommande = await commander();
+    if (!idCommande) return;
+
+    const detailsCommandes = commandeDetails.flatMap((detail) =>
+      Array(detail.quantite).fill({
+        idCommande,
+        idPlat: detail.plat.id,
+        status: "en cours",
+      })
+    );
+
+    await detailCommander(detailsCommandes);
+    setPlats([]);
   };
 
   const renderItem = ({ item }) => (
@@ -60,11 +94,7 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Liste des plats</Text>
-      <FlatList
-        data={plats}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-      />
+      <FlatList data={plats} keyExtractor={(item) => item.id.toString()} renderItem={renderItem} />
       <Bouton title="Acheter" onPress={handleValiderCommande} variant="primary" />
     </View>
   );
@@ -76,27 +106,27 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    marginBottom: 50,
-    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
   },
   cardContainer: {
-    marginBottom: 30,
+    marginBottom: 20,
     backgroundColor: couleurs.primaire[5],
-    borderRadius: 20,
-    padding: 10,
+    borderRadius: 10,
+    padding: 15,
   },
   quantityContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
   },
   quantityText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginHorizontal: 30,
+    fontSize: 18,
+    fontWeight: "bold",
+    marginHorizontal: 15,
   },
 });
 

@@ -3,17 +3,35 @@ import { StyleSheet, Text, SafeAreaView, View, TouchableOpacity } from 'react-na
 import Formulaire from '../components/Formulaire';
 import Bouton from '../components/Bouton';
 import couleurs from '../couleurs/Couleurs';
-import Entete from '../components/Entete'; // Importation du composant Entete
+import { postData } from '../utils/api';
+import Entete from '../components/Entete';
 
 const Login = ({ setCurrentPage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     console.log('Email:', email);
     console.log('Password:', password);
-    // Redirige vers la page ListePlat après la connexion
-    setCurrentPage('ListePlats');
+    
+    const data = {
+      email,
+      mdp: password,
+    };
+    
+    try {
+      const apiData = await postData("users/login", data);
+      
+      if (apiData.error) {
+        console.log("Erreur :", apiData.error);
+      } else {
+        console.log("Succès :", apiData.message);
+        setCurrentPage('ListePlats');
+      }
+    } catch (error) {
+      console.error("Erreur de connexion :", error);
+    }
   };
 
   return (
@@ -55,7 +73,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 20,
-    marginTop: 100, // Espace pour l'entête
+    marginTop: 100,
   },
   title: {
     fontSize: 50,
@@ -70,7 +88,7 @@ const styles = StyleSheet.create({
     color: couleurs.primaire[3],
     textAlign: 'center',
     marginTop: 20,
-    textDecorationLine: 'underline', // Style de lien
+    textDecorationLine: 'underline',
   },
 });
 
