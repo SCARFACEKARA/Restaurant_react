@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import CartePlat from '../components/CartePlat';
-import Bouton from '../components/Bouton';
+import Bouton from '../components/Bouton';  // Bouton avec variante
 import { getData } from '../utils/api';
+import couleurs from '../couleurs/Couleurs';
 
 const ListePlat = ({ setCommande, setCurrentPage }) => {
   const [plats, setPlats] = useState([]);
   const [quantites, setQuantites] = useState({});
 
-  // Fonction pour récupérer les plats
   const loadPlats = async () => {
     try {
       const apiData = await getData("admin/plats/all-detailed");
@@ -18,7 +18,6 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
     }
   };
 
-  // Chargement des plats au montage du composant
   useEffect(() => {
     loadPlats();
   }, []);
@@ -66,7 +65,7 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
       />
-      <Bouton title="Acheter" onPress={handleValiderCommande} />
+      <Bouton title="Acheter" onPress={handleValiderCommande} variant="primary" />
     </View>
   );
 };
@@ -77,15 +76,15 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 50,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 50,
     textAlign: 'center',
   },
   cardContainer: {
-    marginBottom: 20,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 10,
+    marginBottom: 30,
+    backgroundColor: couleurs.primaire[5],
+    borderRadius: 20,
     padding: 10,
   },
   quantityContainer: {
@@ -95,9 +94,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   quantityText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginHorizontal: 10,
+    marginHorizontal: 30,
   },
 });
 
