@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import couleurs from '../couleurs/Couleurs'; // Assurez-vous que la couleur est importée correctement
 
 const Bouton = ({ onPress, title = "Cliquez ici", variant = "primary" }) => {
   const buttonStyles = {
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   primary: {
-    backgroundColor: '#6B21A8',
+    backgroundColor: couleurs.primaire[2], // Utilisation de couleurs.primaire[1]
   },
   secondary: {
     backgroundColor: '#D1D5DB',

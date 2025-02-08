@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Button, TextInput } from 'react-native';
 import { getData } from '../utils/api';
 
-const ListeCommande = () => {
+const ListeCommande = ({ setCommande }) => {
   const [commandes, setCommandes] = useState([]);
   const [commandeSelectionnee, setCommandeSelectionnee] = useState(null);
+  const [newCommande, setNewCommande] = useState('');
 
   // Charger les commandes au montage du composant
   useEffect(() => {
@@ -19,6 +20,14 @@ const ListeCommande = () => {
     loadPlats();
   }, []);
 
+  // Fonction pour ajouter une nouvelle commande
+  const ajouterCommande = () => {
+    if (newCommande.trim() !== '') {
+      setCommandes(prevCommandes => [...prevCommandes, { id: commandes.length + 1, nom: newCommande }]);
+      setNewCommande('');
+    }
+  };
+
   // Fonction pour afficher/cacher les détails d'une commande
   const toggleDetails = (id) => {
     setCommandeSelectionnee((prevId) => (prevId === id ? null : id));
@@ -29,10 +38,10 @@ const ListeCommande = () => {
     <View style={styles.commandeContainer}>
       <TouchableOpacity onPress={() => toggleDetails(item.id)}>
         <Text style={styles.commandeTitle}>Commande #{item.id}</Text>
-        <Text>Client ID: {item.client.id}</Text>
-        <Text>Email: {item.client.email}</Text>
+        <Text>Client ID: {item.client?.id}</Text>
+        <Text>Email: {item.client?.email}</Text>
         <Text>Date : {item.dateCommande}</Text>
-        <Text>Montant total : {item.montantTotal.toFixed(2)} €</Text>
+        <Text>Montant total : {item.montantTotal?.toFixed(2)} €</Text>
         <Text>Status : {item.status}</Text>
       </TouchableOpacity>
       {commandeSelectionnee === item.id && item.details && (
@@ -52,7 +61,14 @@ const ListeCommande = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Liste des commandes</Text>
+      <Text style={styles.title}>Liste des Commandes</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Nouvelle commande"
+        value={newCommande}
+        onChangeText={setNewCommande}
+      />
+      <Button title="Ajouter une commande" onPress={ajouterCommande} />
       <FlatList
         data={commandes}
         keyExtractor={(item) => item.id.toString()}
@@ -64,40 +80,41 @@ const ListeCommande = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+    marginBottom: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 8,
+    marginBottom: 10,
+    borderRadius: 5,
   },
   commandeContainer: {
-    backgroundColor: '#f0f0f0',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 15,
+    padding: 10,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#ddd',
   },
   commandeTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  detailsContainer: {
-    marginTop: 10,
-    backgroundColor: '#e6e6e6',
-    padding: 10,
-    borderRadius: 8,
-  },
-  detailsTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
+  },
+  detailsContainer: {
+    marginTop: 5,
+    padding: 5,
+    backgroundColor: '#f9f9f9',
+  },
+  detailsTitle: {
+    fontWeight: 'bold',
   },
   detailItem: {
-    marginBottom: 5,
+    marginVertical: 3,
   },
 });
 
