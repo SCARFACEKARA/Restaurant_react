@@ -1,65 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { getData } from '../utils/api';
 
 const ListeCommande = () => {
-  const [commandes] = useState([
-    {
-      id: 1,
-      idClient: 2,
-      dateCommande: '2025-02-07',
-      montantTotal: 35.50,
-      status: 'en cours',
-      details: [
-        { idPlat: 1, nomPlat: 'Pizza Margherita', quantite: 2, prix: 12 },
-        { idPlat: 2, nomPlat: 'Salade César', quantite: 1, prix: 8 },
-      ],
-    },
-    {
-      id: 2,
-      idClient: 3,
-      dateCommande: '2025-02-06',
-      montantTotal: 42.00,
-      status: 'fini',
-      details: [
-        { idPlat: 3, nomPlat: 'Burger Vegan', quantite: 3, prix: 10 },
-      ],
-    },
-    {
-      id: 3,
-      idClient: 4,
-      dateCommande: '2025-02-05',
-      montantTotal: 25.00,
-      status: 'livrer',
-      details: [
-        { idPlat: 1, nomPlat: 'Pizza Margherita', quantite: 1, prix: 12 },
-        { idPlat: 4, nomPlat: 'Soupe aux légumes', quantite: 1, prix: 13 },
-      ],
-    },
-  ]);
-
+  const [commandes, setCommandes] = useState([]);
   const [commandeSelectionnee, setCommandeSelectionnee] = useState(null);
 
+  // Charger les commandes au montage du composant
+  useEffect(() => {
+    const loadPlats = async () => {
+      try {
+        const apiData = await getData("admin/commandes/all");
+        setCommandes(apiData);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des commandes :", error);
+      }
+    };
+    loadPlats();
+  }, []);
+
+  // Fonction pour afficher/cacher les détails d'une commande
   const toggleDetails = (id) => {
     setCommandeSelectionnee((prevId) => (prevId === id ? null : id));
   };
 
+  // Rendu d'une commande
   const renderCommande = ({ item }) => (
     <View style={styles.commandeContainer}>
       <TouchableOpacity onPress={() => toggleDetails(item.id)}>
         <Text style={styles.commandeTitle}>Commande #{item.id}</Text>
-        <Text>Client : {item.idClient}</Text>
+        <Text>Client ID: {item.client.id}</Text>
+        <Text>Email: {item.client.email}</Text>
         <Text>Date : {item.dateCommande}</Text>
         <Text>Montant total : {item.montantTotal.toFixed(2)} €</Text>
         <Text>Status : {item.status}</Text>
       </TouchableOpacity>
-      {commandeSelectionnee === item.id && (
+      {commandeSelectionnee === item.id && item.details && (
         <View style={styles.detailsContainer}>
           <Text style={styles.detailsTitle}>Détails de la commande :</Text>
           {item.details.map((detail) => (
-            <View key={detail.idPlat} style={styles.detailItem}>
-              <Text>Plat : {detail.nomPlat}</Text>
+            <View key={detail.id} style={styles.detailItem}>
+              <Text>Plat : {detail.plat.nomPlat}</Text>
               <Text>Quantité : {detail.quantite}</Text>
-              <Text>Prix : {detail.prix.toFixed(2)} €</Text>
+              <Text>Prix : {parseFloat(detail.plat.prixUnitaire).toFixed(2)} €</Text>
             </View>
           ))}
         </View>

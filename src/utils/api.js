@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiBaseUrl = 'http://192.168.1.173:8000/api';
+const apiBaseUrl = 'http://192.168.1.174:8000/api';
 
 
 export const getData = async (endpoint) => {
