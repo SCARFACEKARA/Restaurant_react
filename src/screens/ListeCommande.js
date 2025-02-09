@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Button, TextInput } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { getData } from '../utils/api';
+import Entete from '../components/Entete';
+import couleurs from '../couleurs/Couleurs';
 
-const ListeCommande = ({ setCommande }) => {
+const ListeCommande = ({ setCurrentPage }) => {
   const [commandes, setCommandes] = useState([]);
   const [commandeSelectionnee, setCommandeSelectionnee] = useState(null);
-  const [newCommande, setNewCommande] = useState('');
 
-  // Charger les commandes au montage du composant
   useEffect(() => {
-    const loadPlats = async () => {
+    const loadCommandes = async () => {
       try {
         const apiData = await getData("admin/commandes/all");
         setCommandes(apiData);
@@ -17,27 +17,21 @@ const ListeCommande = ({ setCommande }) => {
         console.error("Erreur lors de la récupération des commandes :", error);
       }
     };
-    loadPlats();
+    loadCommandes();
   }, []);
 
-  // Fonction pour ajouter une nouvelle commande
-  const ajouterCommande = () => {
-    if (newCommande.trim() !== '') {
-      setCommandes(prevCommandes => [...prevCommandes, { id: commandes.length + 1, nom: newCommande }]);
-      setNewCommande('');
-    }
-  };
-
-  // Fonction pour afficher/cacher les détails d'une commande
   const toggleDetails = (id) => {
     setCommandeSelectionnee((prevId) => (prevId === id ? null : id));
   };
 
-  // Rendu d'une commande
+  const handleValiderCommande = () => {
+    console.log("Commande validée !");
+  };
+
   const renderCommande = ({ item }) => (
     <View style={styles.commandeContainer}>
       <TouchableOpacity onPress={() => toggleDetails(item.id)}>
-        <Text style={styles.commandeTitle}>Commande #{item.id}</Text>
+        <Text style={styles.commandeTitle}>Commande N° {item.id}</Text>
         <Text>Client ID: {item.client?.id}</Text>
         <Text>Email: {item.client?.email}</Text>
         <Text>Date : {item.dateCommande}</Text>
@@ -51,7 +45,7 @@ const ListeCommande = ({ setCommande }) => {
             <View key={detail.id} style={styles.detailItem}>
               <Text>Plat : {detail.plat.nomPlat}</Text>
               <Text>Quantité : {detail.quantite}</Text>
-              <Text>Prix : {parseFloat(detail.plat.prixUnitaire).toFixed(2)} €</Text>
+              <Text>Prix : {parseFloat(detail.plat.prixUnitaire).toFixed(2)} Ariary </Text>
             </View>
           ))}
         </View>
@@ -60,50 +54,60 @@ const ListeCommande = ({ setCommande }) => {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Liste des Commandes</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nouvelle commande"
-        value={newCommande}
-        onChangeText={setNewCommande}
-      />
-      <Button title="Ajouter une commande" onPress={ajouterCommande} />
-      <FlatList
-        data={commandes}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderCommande}
-      />
-    </View>
+    <SafeAreaView style={styles.container}>
+      {/* <Entete setCurrentPage={setCurrentPage} /> */}
+
+      <View style={styles.listContainer}>
+        <Text style={styles.title}>Liste des Commandes</Text>
+        <FlatList
+          data={commandes}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderCommande}
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
+    backgroundColor: couleurs.primaire[0],
+    marginTop: 50,  // Augmentez l'espacement supérieur pour éviter la superposition avec l'entête
+  },
+  listContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    marginTop: 20,  // Ajuste la marge pour un espacement adéquat
   },
   title: {
-    fontSize: 20,
+    fontSize: 50,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 20,
+    textAlign: 'center',
+    color: couleurs.primaire[3],
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 5,
-  },
+  // list: {
+  //   flex: 1,
+  // },
+  // listContent: {
+  //   paddingBottom: 20,
+  //   top:320,
+  // },
   commandeContainer: {
     padding: 10,
     marginVertical: 5,
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#ddd',
+    color: couleurs.primaire[2],
   },
   commandeTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: couleurs.primaire[3],
   },
   detailsContainer: {
     marginTop: 5,
@@ -115,6 +119,9 @@ const styles = StyleSheet.create({
   },
   detailItem: {
     marginVertical: 3,
+  },
+  footerButton: {
+    marginTop: 10,
   },
 });
 

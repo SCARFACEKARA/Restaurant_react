@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     backgroundColor: couleurs.primaire[0],
   },
   logo: {
-    width: 700, // Taille plus grande
-    height: 700,
+    width: 500, // Taille plus grande
+    height: 500,
     resizeMode: 'contain', // Empêche l'image d'être coupée
     marginBottom: 20,
   },

@@ -19,7 +19,7 @@ const Signin = ({ setCurrentPage }) => { // Ajout de setCurrentPage en tant que 
 
   return (
     <SafeAreaView style={styles.container}>
-      <Entete title="S'inscrire" />
+      <Entete setCurrentPage={setCurrentPage} />
 
       <View style={styles.formContainer}>
         <Text style={styles.title}>Connexion</Text>
@@ -54,27 +54,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: couleurs.primaire[0],
+    marginTop: 100,
   },
   formContainer: {
-    flex: 1,
-    paddingTop: 120, // Compense la hauteur de l'entête
-    paddingHorizontal: 20,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: couleurs.primaire[3],
-  },
+      flex: 1,
+      justifyContent: 'center',
+      paddingHorizontal: 20,
+      marginTop: 100,
+    },
+    title: {
+      fontSize: 50,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      textAlign: 'center',
+      color: couleurs.primaire[3],
+    },
   loginLink: {
     fontSize: 16,
     fontWeight: 'bold',
     color: couleurs.primaire[3],
     textAlign: 'center',
     marginTop: 20,
-    textDecorationLine: 'underline', // Style de lien
+    textDecorationLine: 'underline',
   },
 });
 
