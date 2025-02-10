@@ -4,21 +4,22 @@ import CartePlat from '../components/CartePlat';
 import Bouton from '../components/Bouton';
 import { getData, postData } from '../utils/api';
 import couleurs from '../couleurs/Couleurs';
+import Entete from '../components/Entete';
 
 const ListePlat = ({ setCommande, setCurrentPage }) => {
   const [plats, setPlats] = useState([]);
   const [quantites, setQuantites] = useState({});
 
-  const loadPlats = async () => {
-    try {
-      const apiData = await getData("admin/plats/all-detailed");
-      setPlats(apiData);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des plats :", error);
-    }
-  };
-
   useEffect(() => {
+    const loadPlats = async () => {
+      try {
+        const apiData = await getData("admin/plats/all-detailed");
+        setPlats(apiData);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des plats :", error);
+      }
+    };
+
     loadPlats();
   }, []);
 
@@ -32,7 +33,7 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
   async function commander() {
     try {
       const payload = {
-        montantTotal: 780,
+        montantTotal: 780, // TODO: Calculer dynamiquement le montant total
         status: "en cours",
         idClient: "1",
       };
@@ -40,13 +41,14 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
       return apiData.id;
     } catch (error) {
       console.error("Erreur lors de la création de la commande :", error);
+      return null;
     }
   }
 
-  async function detailCommander(data) {
+  async function detailCommander(details) {
     try {
-      const apiData = await postData("admin/detail-commandes/create", data);
-      console.log("Détails commande", apiData);
+      await postData("admin/detail-commandes/create", details);
+      console.log("Détails de la commande envoyés !");
     } catch (error) {
       console.error("Erreur lors de l'envoi des détails de la commande :", error);
     }
@@ -56,8 +58,9 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
     const commandeDetails = plats
       .filter((plat) => quantites[plat.id] > 0)
       .map((plat) => ({
-        plat,
+        idPlat: plat.id,
         quantite: quantites[plat.id],
+        status: "en cours",
       }));
 
     if (commandeDetails.length === 0) {
@@ -68,16 +71,14 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
     const idCommande = await commander();
     if (!idCommande) return;
 
-    const detailsCommandes = commandeDetails.flatMap((detail) =>
-      Array(detail.quantite).fill({
-        idCommande,
-        idPlat: detail.plat.id,
-        status: "en cours",
-      })
-    );
+    const detailsCommandes = commandeDetails.map((detail) => ({
+      idCommande,
+      idPlat: detail.idPlat,
+      quantite: detail.quantite,
+      status: "en cours",
+    }));
 
     await detailCommander(detailsCommandes);
-    setPlats([]);
   };
 
   const renderItem = ({ item }) => (
@@ -93,6 +94,9 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.enteteContainer}>
+        <Entete setCurrentPage={setCurrentPage} />
+      </View>
       <Text style={styles.title}>Liste des plats</Text>
       <FlatList
         data={plats}
@@ -113,15 +117,19 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 50,
   },
+  enteteContainer: {
+    marginBottom: 20,
+  },
   title: {
-    fontSize: 24,
+    fontSize: 40,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    color: couleurs.primaire[3],
   },
   cardContainer: {
     marginBottom: 20,
-    backgroundColor: couleurs.primaire[5],
+    backgroundColor: couleurs.primaire[1],
     borderRadius: 10,
     padding: 15,
   },

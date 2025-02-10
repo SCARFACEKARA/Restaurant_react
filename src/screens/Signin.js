@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, View, TouchableOpacity } from 'react-native'; // Ajout de TouchableOpacity
+import { StyleSheet, Text, SafeAreaView, View, TouchableOpacity } from 'react-native';
 import Formulaire from '../components/Formulaire';
 import Bouton from '../components/Bouton';
 import Entete from '../components/Entete';
 import couleurs from '../couleurs/Couleurs';
 
-const Signin = ({ setCurrentPage }) => { // Ajout de setCurrentPage en tant que prop
+const Signin = ({ setCurrentPage }) => {
   const [nom, setNom] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +14,7 @@ const Signin = ({ setCurrentPage }) => { // Ajout de setCurrentPage en tant que 
     console.log('Nom:', nom);
     console.log('Email:', email);
     console.log('Password:', password);
-    setCurrentPage('ListePlats'); // Redirection vers ListePlats après l'inscription
+    setCurrentPage('ListePlats'); // Redirection après l'inscription
   };
 
   return (
@@ -24,22 +24,10 @@ const Signin = ({ setCurrentPage }) => { // Ajout de setCurrentPage en tant que 
       <View style={styles.formContainer}>
         <Text style={styles.title}>Connexion</Text>
 
-        <Formulaire
-          placeholder="Nom"
-          value={nom}
-          onChangeText={setNom}
-        />
-        <Formulaire
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <Formulaire
-          placeholder="Mot de passe"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <Formulaire placeholder="Nom" value={nom} onChangeText={setNom} />
+        <Formulaire placeholder="Email" value={email} onChangeText={setEmail} />
+        <Formulaire placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry />
+
         <Bouton onPress={handleSignin} title="S'inscrire" variant="primary" />
 
         <TouchableOpacity onPress={() => setCurrentPage('Login')}>
@@ -57,18 +45,18 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   formContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      paddingHorizontal: 20,
-      marginTop: 100,
-    },
-    title: {
-      fontSize: 50,
-      fontWeight: 'bold',
-      marginBottom: 20,
-      textAlign: 'center',
-      color: couleurs.primaire[3],
-    },
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    marginTop: 50, // Ajusté pour un meilleur affichage
+  },
+  title: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: couleurs.primaire[3],
+  },
   loginLink: {
     fontSize: 16,
     fontWeight: 'bold',

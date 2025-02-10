@@ -21,26 +21,26 @@ const Entete = ({ onBackPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 1, // Hauteur de l'entête
+    height: 100, // Hauteur cohérente de l'entête
     width: '100%', // Largeur de l'écran
-    // flexDirection: 'row', // Disposition horizontale
+    flexDirection: 'row', // Disposition horizontale
     justifyContent: 'center', // Centre les éléments horizontalement
     alignItems: 'center', // Centre les éléments verticalement
-    // paddingTop: 10, // Pour compenser l'espace de la barre de statut
+    paddingTop: 20, // Pour compenser l'espace de la barre de statut
     position: 'absolute', // Fixé en haut de la page
-    top: 100,
+    top: 0,
     zIndex: 10,
   },
   logo: {
-    width: 400, // Ajuste la taille du logo selon tes besoins
-    height: 400,
+    width: 200, // Ajuste la taille du logo
+    height: 200,
     resizeMode: 'contain',
   },
-  // backButton: {
-  //   position: 'absolute',
-  //   left: 10,
-  //   top: 20, // Ajuste l'espacement pour le bouton "retour"
-  // },
+  backButton: {
+    position: 'absolute',
+    left: 10,
+    top: 20, // Ajuste l'espacement pour le bouton "retour"
+  },
 });
 
 export default Entete;

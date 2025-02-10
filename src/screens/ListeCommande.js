@@ -55,8 +55,10 @@ const ListeCommande = ({ setCurrentPage }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Entete setCurrentPage={setCurrentPage} /> */}
-
+      <View style={styles.enteteContainer}>
+        <Entete setCurrentPage={setCurrentPage} />
+      </View>
+      
       <View style={styles.listContainer}>
         <Text style={styles.title}>Liste des Commandes</Text>
         <FlatList
@@ -75,34 +77,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: couleurs.primaire[0],
-    marginTop: 50,  // Augmentez l'espacement supérieur pour éviter la superposition avec l'entête
+  },
+  enteteContainer: {
+    backgroundColor: couleurs.primaire[1],
+    marginBottom: 30,
+    zIndex: 10,  // Garantit que l'entête reste au-dessus du contenu
   },
   listContainer: {
     flex: 1,
     paddingHorizontal: 20,
-    marginTop: 20,  // Ajuste la marge pour un espacement adéquat
+    marginTop: 5,  // Assure qu'il y ait assez de place pour l'entête
   },
   title: {
-    fontSize: 50,
+    fontSize: 40,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginVertical: 10,
     textAlign: 'center',
     color: couleurs.primaire[3],
+    marginTop: 20,
   },
-  // list: {
-  //   flex: 1,
-  // },
-  // listContent: {
-  //   paddingBottom: 20,
-  //   top:320,
-  // },
+  list: {
+    flex: 1,
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
   commandeContainer: {
     padding: 10,
     marginVertical: 5,
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#ddd',
-    color: couleurs.primaire[2],
+    backgroundColor: couleurs.primaire[2],
   },
   commandeTitle: {
     fontSize: 16,
