@@ -31,7 +31,7 @@ const ListeCommande = ({ setCurrentPage }) => {
   const renderCommande = ({ item }) => (
     <View style={styles.commandeContainer}>
       <TouchableOpacity onPress={() => toggleDetails(item.id)}>
-        <Text style={styles.commandeTitle}>Commande #{item.id}</Text>
+        <Text style={styles.commandeTitle}>Commande N° {item.id}</Text>
         <Text>Client ID: {item.client?.id}</Text>
         <Text>Email: {item.client?.email}</Text>
         <Text>Date : {item.dateCommande}</Text>
@@ -45,7 +45,7 @@ const ListeCommande = ({ setCurrentPage }) => {
             <View key={detail.id} style={styles.detailItem}>
               <Text>Plat : {detail.plat.nomPlat}</Text>
               <Text>Quantité : {detail.quantite}</Text>
-              <Text>Prix : {parseFloat(detail.plat.prixUnitaire).toFixed(2)} €</Text>
+              <Text>Prix : {parseFloat(detail.plat.prixUnitaire).toFixed(2)} Ariary </Text>
             </View>
           ))}
         </View>
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   enteteContainer: {
     backgroundColor: couleurs.primaire[1],
     marginBottom: 30,
-    Index: 10,  // Garantit que l'entête reste au-dessus du contenu
+    zIndex: 10,  // Garantit que l'entête reste au-dessus du contenu
   },
   listContainer: {
     flex: 1,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     textAlign: 'center',
     color: couleurs.primaire[3],
-    marginTop:200,
+    marginTop: 20,
   },
   list: {
     flex: 1,
@@ -108,10 +108,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#ddd',
+    backgroundColor: couleurs.primaire[2],
   },
   commandeTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: couleurs.primaire[3],
   },
   detailsContainer: {
     marginTop: 5,

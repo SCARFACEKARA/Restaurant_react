@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: couleurs.primaire[0],
+    marginTop: 100,
   },
   formContainer: {
     flex: 1,

@@ -21,19 +21,19 @@ const Entete = ({ onBackPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 100, // Hauteur de l'entête
+    height: 100, // Hauteur cohérente de l'entête
     width: '100%', // Largeur de l'écran
     flexDirection: 'row', // Disposition horizontale
     justifyContent: 'center', // Centre les éléments horizontalement
     alignItems: 'center', // Centre les éléments verticalement
-    paddingTop: 200, // Pour compenser l'espace de la barre de statut
+    paddingTop: 20, // Pour compenser l'espace de la barre de statut
     position: 'absolute', // Fixé en haut de la page
     top: 0,
-    // Index: 10,
+    zIndex: 10,
   },
   logo: {
-    width: 600, // Ajuste la taille du logo selon tes besoins
-    height: 600,
+    width: 200, // Ajuste la taille du logo
+    height: 200,
     resizeMode: 'contain',
   },
   backButton: {

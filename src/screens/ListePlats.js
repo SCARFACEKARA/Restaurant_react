@@ -10,16 +10,16 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
   const [plats, setPlats] = useState([]);
   const [quantites, setQuantites] = useState({});
 
-  const loadPlats = async () => {
-    try {
-      const apiData = await getData("admin/plats/all-detailed");
-      setPlats(apiData);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des plats :", error);
-    }
-  };
-
   useEffect(() => {
+    const loadPlats = async () => {
+      try {
+        const apiData = await getData("admin/plats/all-detailed");
+        setPlats(apiData);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des plats :", error);
+      }
+    };
+
     loadPlats();
   }, []);
 
@@ -33,7 +33,7 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
   async function commander() {
     try {
       const payload = {
-        montantTotal: 780,
+        montantTotal: 780, // TODO: Calculer dynamiquement le montant total
         status: "en cours",
         idClient: "1",
       };
@@ -41,13 +41,14 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
       return apiData.id;
     } catch (error) {
       console.error("Erreur lors de la création de la commande :", error);
+      return null;
     }
   }
 
-  async function detailCommander(data) {
+  async function detailCommander(details) {
     try {
-      const apiData = await postData("admin/detail-commandes/create", data);
-      console.log("Détails commande", apiData);
+      await postData("admin/detail-commandes/create", details);
+      console.log("Détails de la commande envoyés !");
     } catch (error) {
       console.error("Erreur lors de l'envoi des détails de la commande :", error);
     }
@@ -57,8 +58,9 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
     const commandeDetails = plats
       .filter((plat) => quantites[plat.id] > 0)
       .map((plat) => ({
-        plat,
+        idPlat: plat.id,
         quantite: quantites[plat.id],
+        status: "en cours",
       }));
 
     if (commandeDetails.length === 0) {
@@ -69,16 +71,14 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
     const idCommande = await commander();
     if (!idCommande) return;
 
-    const detailsCommandes = commandeDetails.flatMap((detail) =>
-      Array(detail.quantite).fill({
-        idCommande,
-        idPlat: detail.plat.id,
-        status: "en cours",
-      })
-    );
+    const detailsCommandes = commandeDetails.map((detail) => ({
+      idCommande,
+      idPlat: detail.idPlat,
+      quantite: detail.quantite,
+      status: "en cours",
+    }));
 
     await detailCommander(detailsCommandes);
-    setPlats([]);
   };
 
   const renderItem = ({ item }) => (
@@ -104,7 +104,9 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
         renderItem={renderItem}
         contentContainerStyle={styles.flatListContainer}
       />
-      <Bouton title="Acheter" onPress={handleValiderCommande} variant="primary" />
+      <View style={styles.buttonContainer}>
+        <Bouton title="Acheter" onPress={handleValiderCommande} variant="primary" />
+      </View>
     </View>
   );
 };
@@ -113,10 +115,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    marginTop: 50,
   },
   enteteContainer: {
-    marginTop: 0, // Pas de marge avant l'entête, juste en haut de la page
-    marginBottom: 200, // Pour séparer l'entête du reste du contenu
+    marginBottom: 20,
   },
   title: {
     fontSize: 40,
@@ -125,7 +127,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: couleurs.primaire[3],
   },
-  
   cardContainer: {
     marginBottom: 20,
     backgroundColor: couleurs.primaire[1],
@@ -144,7 +145,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
   },
   flatListContainer: {
-    paddingBottom: 100, // Ajouter un espace pour ne pas couper le dernier bouton
+    paddingBottom: 100,
+  },
+  buttonContainer: {
+    marginTop: 20,
+    alignItems: "center",
   },
 });
 
