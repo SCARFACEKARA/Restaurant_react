@@ -100,7 +100,6 @@ const ListePlat = ({ setCommande, setCurrentPage }) => {
         renderItem={renderItem}
         contentContainerStyle={styles.flatListContainer}
       />
-
       <View style={styles.buttonContainer}>
         <Bouton title="Acheter" onPress={handleValiderCommande} variant="primary" />
       </View>
@@ -112,22 +111,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    marginTop: 50, 
+    marginTop: 50,
   },
   title: {
-    fontSize: 50,
+    fontSize: 24,
     fontWeight: "bold",
-    marginTop: 20,
+    marginBottom: 20,
     textAlign: "center",
-    color: couleurs.primaire[3],
   },
-  
   cardContainer: {
-    marginTop: 50,
+    marginBottom: 20,
     backgroundColor: couleurs.primaire[5],
     borderRadius: 10,
     padding: 15,
-
   },
   quantityContainer: {
     flexDirection: "row",
@@ -143,7 +139,10 @@ const styles = StyleSheet.create({
   flatListContainer: {
     paddingBottom: 100,
   },
-
+  buttonContainer: {
+    marginTop: 20,
+    alignItems: "center",
+  },
 });
 
 export default ListePlat;
